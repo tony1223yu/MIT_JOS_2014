@@ -62,6 +62,7 @@ serial_intr(void)
 		cons_intr(serial_proc_data);
 }
 
+/* QEMU */
 static void
 serial_putc(int c)
 {
@@ -148,10 +149,10 @@ cga_init(void)
 	}
 
 	/* Extract cursor location */
-	outb(addr_6845, 14);
-	pos = inb(addr_6845 + 1) << 8;
-	outb(addr_6845, 15);
-	pos |= inb(addr_6845 + 1);
+	outb(addr_6845, 14); // cursor location high
+	pos = inb(addr_6845 + 1) << 8; // read cursor location
+	outb(addr_6845, 15); // cursor location low
+	pos |= inb(addr_6845 + 1); // read cursor location
 
 	crt_buf = (uint16_t*) cp;
 	crt_pos = pos;
@@ -182,7 +183,7 @@ cga_putc(int c)
 	case '\t':
 		cons_putc(' ');
 		cons_putc(' ');
-		cons_putc(' ');
+	    cons_putc(' ');
 		cons_putc(' ');
 		cons_putc(' ');
 		break;
@@ -202,10 +203,10 @@ cga_putc(int c)
 	}
 
 	/* move that little blinky thing */
-	outb(addr_6845, 14);
-	outb(addr_6845 + 1, crt_pos >> 8);
+    outb(addr_6845, 14);
+	outb(addr_6845 + 1, crt_pos >> 8); // set cursor location
 	outb(addr_6845, 15);
-	outb(addr_6845 + 1, crt_pos);
+	outb(addr_6845 + 1, crt_pos); // set cursor location
 }
 
 

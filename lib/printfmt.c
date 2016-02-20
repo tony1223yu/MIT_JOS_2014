@@ -46,7 +46,7 @@ printnum(void (*putch)(int, void*), void *putdat,
 	}
 
 	// then print this (the least significant) digit
-	putch("0123456789abcdef"[num % base], putdat);
+	putch("0123456789abcdef"[num % base], putdat); // The "0123....def" is considered as char*?
 }
 
 // Get an unsigned int of various possible sizes from a varargs list,
@@ -138,7 +138,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 
 		case '.':
 			if (width < 0)
-				width = 0;
+				width = 0; // force the process-precision NOT to assign to width
 			goto reswitch;
 
 		case '#':
@@ -178,7 +178,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 			if (width > 0 && padc != '-')
 				for (width -= strnlen(p, precision); width > 0; width--)
 					putch(padc, putdat);
-			for (; (ch = *p++) != '\0' && (precision < 0 || --precision >= 0); width--)
+			for (; (ch = *p++) != '\0' && (precision < 0 || --precision >= 0); width--) // *p ++ is same as *(p ++), which would increase p instead of the content pointed by p
 				if (altflag && (ch < ' ' || ch > '~'))
 					putch('?', putdat);
 				else
@@ -206,9 +206,9 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		// (unsigned) octal
 		case 'o':
 			// Replace this with your code.
-			putch('X', putdat);
-			putch('X', putdat);
-			putch('X', putdat);
+			num = getint(&ap, lflag);
+            base = 8;
+            goto number;
 			break;
 
 		// pointer

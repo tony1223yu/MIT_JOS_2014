@@ -19,10 +19,14 @@ readline(const char *prompt)
 		if (c < 0) {
 			cprintf("read error: %e\n", c);
 			return NULL;
-		} else if ((c == '\b' || c == '\x7f') && i > 0) {
-			if (echoing)
+		} else if ((c == '\b' || c == '\x7f')) {
+			if ((i > 0) && echoing)
+            {
 				cputchar('\b');
-			i--;
+				cputchar(' ');
+				cputchar('\b');
+			    i--;
+            }
 		} else if (c >= ' ' && i < BUFLEN-1) {
 			if (echoing)
 				cputchar(c);
