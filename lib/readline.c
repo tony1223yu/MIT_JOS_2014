@@ -22,6 +22,7 @@ readline(const char *prompt)
 		} else if ((c == '\b' || c == '\x7f')) {
 			if ((i > 0) && echoing)
             {
+                /* for QEMU */
 				cputchar('\b');
 				cputchar(' ');
 				cputchar('\b');
